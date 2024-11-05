@@ -1,80 +1,87 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net;
-using System.Runtime.InteropServices.Marshalling;
-using System.Transactions;
+using System.Runtime.InteropServices;
 
 class Calculator
 {
-    List<float> numbers=new List<float>();
-    List<string> operators= new List<string>();
+    float num; string? operation="default"; //string? is a nullable string.
+    float result;
+    string overallCalculation= "default";
+    List<float> numbers = new List<float>();
+    List<string> operations = new List<string>();
+
     public void WelcomeMessage()
     {
-        Console.WriteLine("Welcome to Calculator. Enter a number to start.");
-    }
-    public void Main()
-    {
-        Input();
-        Console.WriteLine("test");
+        Console.WriteLine("welcome to calculator. start typing to start!");
     }
 
-
-    public void StoreValues()
-    {
-
-    }
     public void Input()
     {
-        bool ContinueOP=true;
-        while(ContinueOP)
+        bool continueInput=true;
+        while(continueInput)
         {
-        Console.WriteLine("Number: ");
-        int num=Convert.ToInt32(Console.ReadLine());
-        numbers.Add(num);
-
-        Console.WriteLine("Enter an operator (+,-) or enter (=) to calculate result: ");
-        string? op=Console.ReadLine(); //string? is a nullable string type.
-        if(string.IsNullOrWhiteSpace(op))
-        {
-            Console.WriteLine("operator is blank");
-            return;
-        }
-        operators.Add(op);
-        if(op=="=")
-        {
-            ContinueOP=false;
-        }
+            Console.WriteLine("enter number: ");
+            num=Convert.ToInt32(Console.ReadLine());
+            numbers.Add(num);
+            
+            Console.WriteLine("enter operator: ");
+            operation = Console.ReadLine();
+            while(string.IsNullOrWhiteSpace(operation) || (operation!="+") && (operation!="-") && (operation!="/") && (operation!="x") && (operation!="/") && (operation!="="))
+            {
+                Console.WriteLine("invalid operator. please re-enter: ");
+                operation=Console.ReadLine();
+            }
+            if(operation=="=")
+            {
+                continueInput=false;
+            }
+            operations.Add(operation);
         }
     }
-    public void Calculate()
+    public float Calculation()
     {
-        float result=numbers[0]; //define the one which is in excess first.
-        for(int i=0; i<operators.Count; i++)
+        result= numbers[0];
+        for(int i=0; i<operations.Count; i++)
         {
-            switch(operators[i])
+            switch(operations[i])
             {
                 case "+":
-                    result += numbers[i+1];
+                    result+=numbers[i+1];
                     break;
                 case "-":
                     result -= numbers[i+1];
                     break;
-
+                
             }
+            
         }
-        Console.WriteLine(result);
+        return result;
+    }
+    public void FinalResult()
+    {
+        Console.WriteLine("the answer is ");
+        Console.WriteLine(Calculation());
+    }
+    public void Expression()
+    {
+        Console.WriteLine(numbers[0]);
+        for(int i=0; i<operations.Count; i++)
+        {
+            Console.WriteLine(operations[i]+numbers[i+1]);
+        }
     }
 }
-class Program
+
+class MainProgram
 {
-    static void Main()
+    static void Main() //why is static important here? todo.
     {
         Console.Clear();
-        Calculator calculator= new Calculator();
+        Calculator calculator = new Calculator();
         calculator.WelcomeMessage();
         calculator.Input();
-        calculator.Calculate();
-        Console.WriteLine("test");
+        calculator.Calculation();
+        //calculator.Expression(); needs work
+        calculator.FinalResult();
+
     }
 }
